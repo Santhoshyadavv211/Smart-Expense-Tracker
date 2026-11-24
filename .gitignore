@@ -1,24 +1,168 @@
-# Compiled class file
-*.class
 
-# Log file
-*.log
+import java.util.ArrayList;
+import java.util.Scanner;
 
-# BlueJ files
-*.ctxt
+class Transaction {
+    String type;
+    String category;
+    String description;
+    double amount;
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+    Transaction(String type, String category,
+                String description, double amount) {
+        this.type = type;
+        this.category = category;
+        this.description = description;
+        this.amount = amount;
+    }
+}
 
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
+public class SmartExpenseTracker {
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+    static ArrayList<Transaction> transactions =
+            new ArrayList<>();
+
+    static Scanner sc = new Scanner(System.in);
+
+    public static void main(String[] args) {
+
+        int choice;
+
+        do {
+            System.out.println("\n===== SMART EXPENSE TRACKER =====");
+            System.out.println("1. Add Income");
+            System.out.println("2. Add Expense");
+            System.out.println("3. View Transactions");
+            System.out.println("4. View Balance");
+            System.out.println("5. Expense Summary");
+            System.out.println("6. Exit");
+
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+
+                case 1:
+                    addTransaction("Income");
+                    break;
+
+                case 2:
+                    addTransaction("Expense");
+                    break;
+
+                case 3:
+                    viewTransactions();
+                    break;
+
+                case 4:
+                    viewBalance();
+                    break;
+
+                case 5:
+                    expenseSummary();
+                    break;
+
+                case 6:
+                    System.out.println("Thank you for using Smart Expense Tracker!");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+
+        } while (choice != 6);
+    }
+
+    // Add income or expense
+    static void addTransaction(String type) {
+
+        System.out.print("Enter category (Food/Travel/Shopping/Salary/Education): ");
+        String category = sc.nextLine();
+
+        System.out.print("Enter description: ");
+        String description = sc.nextLine();
+
+        System.out.print("Enter amount: ");
+        double amount = sc.nextDouble();
+        sc.nextLine();
+
+        if (amount <= 0) {
+            System.out.println("Enter a valid positive amount!");
+            return;
+        }
+
+        transactions.add(
+            new Transaction(type, category, description, amount)
+        );
+
+        System.out.println(type + " added successfully!");
+    }
+
+    // Display all transactions
+    static void viewTransactions() {
+
+        if (transactions.isEmpty()) {
+            System.out.println("No transactions found!");
+            return;
+        }
+
+        System.out.println("\n===== TRANSACTION HISTORY =====");
+
+        for (int i = 0; i < transactions.size(); i++) {
+
+            Transaction t = transactions.get(i);
+
+            System.out.println("\nTransaction ID: " + (i + 1));
+            System.out.println("Type: " + t.type);
+            System.out.println("Category: " + t.category);
+            System.out.println("Description: " + t.description);
+            System.out.println("Amount: Rs. " + t.amount);
+        }
+    }
+
+    // Calculate balance
+    static void viewBalance() {
+
+        double income = 0;
+        double expense = 0;
+
+        for (Transaction t : transactions) {
+
+            if (t.type.equals("Income")) {
+                income += t.amount;
+            } else {
+                expense += t.amount;
+            }
+        }
+
+        double balance = income - expense;
+
+        System.out.println("\n===== ACCOUNT BALANCE =====");
+        System.out.println("Total Income: Rs. " + income);
+        System.out.println("Total Expenses: Rs. " + expense);
+        System.out.println("Remaining Balance: Rs. " + balance);
+    }
+
+    // Display expense summary
+    static void expenseSummary() {
+
+        double totalExpense = 0;
+
+        System.out.println("\n===== EXPENSE SUMMARY =====");
+
+        for (Transaction t : transactions) {
+
+            if (t.type.equals("Expense")) {
+                System.out.println(
+                    t.category + " : Rs. " + t.amount
+                );
+
+                totalExpense += t.amount;
+            }
+        }
+
+        System.out.println("----------------------------");
+        System.out.println("Total Spending: Rs. " + totalExpense);
+    }
+}
